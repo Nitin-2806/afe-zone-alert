@@ -2,6 +2,7 @@ import { useState } from "react"
 import { EmergencyButton } from "@/components/ui/emergency-button"
 import { toast } from "@/hooks/use-toast"
 import { AlertTriangle, Check, Phone } from "lucide-react"
+import { Capacitor } from '@capacitor/core'
 
 interface LocationData {
   latitude: number
@@ -32,8 +33,8 @@ export function SOSButton() {
       // Get current location
       const location = await getCurrentLocation()
       
-      // Simulate SMS sending (in real app, this would use native SMS API via Capacitor)
-      await simulateSMSSend(parsedContact, location)
+      // Send real SMS or simulate based on platform
+      await sendEmergencySMS(parsedContact, location)
       
       setIsActivated(true)
       toast({
@@ -89,20 +90,32 @@ export function SOSButton() {
     })
   }
 
-  const simulateSMSSend = async (contact: any, location: LocationData) => {
-    // Simulate network delay
-    await new Promise(resolve => setTimeout(resolve, 1500))
-    
+  const sendEmergencySMS = async (contact: any, location: LocationData) => {
     const message = `🚨 EMERGENCY ALERT 🚨
 ${contact.name}, I need immediate help! 
 Location: ${location.latitude.toFixed(6)}, ${location.longitude.toFixed(6)}
 Time: ${new Date().toLocaleString()}
 Sent from SafeZone Alert`
 
-    console.log("Emergency SMS would be sent:", {
-      to: contact.phone,
-      message: message
-    })
+    // Check if running on native device
+    if (Capacitor.isNativePlatform()) {
+      try {
+        // For native platforms, we'll use browser SMS fallback since community plugin isn't available
+        // In production, you'd integrate with a proper SMS service
+        const smsUrl = `sms:${contact.phone}?body=${encodeURIComponent(message)}`
+        window.open(smsUrl, '_blank')
+      } catch (error) {
+        console.error('Native SMS failed:', error)
+        throw new Error('SMS sending failed')
+      }
+    } else {
+      // Web platform - simulate SMS with detailed logging
+      await new Promise(resolve => setTimeout(resolve, 1500))
+      console.log("Emergency SMS would be sent:", {
+        to: contact.phone,
+        message: message
+      })
+    }
   }
 
   if (isActivated) {
