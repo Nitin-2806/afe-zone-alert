@@ -1,5 +1,6 @@
 import { SOSButton } from "@/components/SOSButton"
 import { EmergencyContact } from "@/components/EmergencyContact"
+import { EmergencyServices } from "@/components/EmergencyServices"
 import { LocationStatus } from "@/components/LocationStatus"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Shield, Smartphone, MapPin, AlertTriangle } from "lucide-react"
@@ -51,9 +52,10 @@ const Index = () => {
         </section>
 
         {/* Status Cards */}
-        <section className="grid gap-4 md:grid-cols-2">
+        <section className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
           <EmergencyContact />
           <LocationStatus />
+          <EmergencyServices />
         </section>
 
         {/* Features Info */}
