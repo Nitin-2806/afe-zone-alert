@@ -12,19 +12,19 @@ interface EmergencyService {
 const emergencyServices: EmergencyService[] = [
   {
     name: "Police",
-    number: "911",
+    number: "112",
     icon: <Shield className="h-5 w-5" />,
     color: "bg-blue-600 hover:bg-blue-700 text-white"
   },
   {
     name: "Ambulance",
-    number: "911",
+    number: "108",
     icon: <Truck className="h-5 w-5" />,
     color: "bg-red-600 hover:bg-red-700 text-white"
   },
   {
     name: "Fire Department",
-    number: "911",
+    number: "112",
     icon: <Flame className="h-5 w-5" />,
     color: "bg-orange-600 hover:bg-orange-700 text-white"
   }
