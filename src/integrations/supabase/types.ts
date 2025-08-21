@@ -112,6 +112,77 @@ export type Database = {
           },
         ]
       }
+      profiles: {
+        Row: {
+          avatar_url: string | null
+          created_at: string
+          full_name: string | null
+          id: string
+          phone: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          avatar_url?: string | null
+          created_at?: string
+          full_name?: string | null
+          id?: string
+          phone?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          avatar_url?: string | null
+          created_at?: string
+          full_name?: string | null
+          id?: string
+          phone?: string | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      real_time_messages: {
+        Row: {
+          alert_id: string | null
+          content: string | null
+          created_at: string
+          id: string
+          location_data: Json | null
+          message_type: string
+          receiver_id: string
+          sender_id: string
+        }
+        Insert: {
+          alert_id?: string | null
+          content?: string | null
+          created_at?: string
+          id?: string
+          location_data?: Json | null
+          message_type: string
+          receiver_id: string
+          sender_id: string
+        }
+        Update: {
+          alert_id?: string | null
+          content?: string | null
+          created_at?: string
+          id?: string
+          location_data?: Json | null
+          message_type?: string
+          receiver_id?: string
+          sender_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "real_time_messages_alert_id_fkey"
+            columns: ["alert_id"]
+            isOneToOne: false
+            referencedRelation: "emergency_alerts"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       t1: {
         Row: {
           created_at: string
