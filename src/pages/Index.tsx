@@ -1,4 +1,7 @@
 import { useState } from "react"
+import { Navigate } from "react-router-dom"
+import { useAuth } from "@/hooks/useAuth"
+import { useRealTimeLocation } from "@/hooks/useRealTimeLocation"
 import { SOSButton } from "@/components/SOSButton"
 import { EmergencyContact } from "@/components/EmergencyContact"
 import { EmergencyServices } from "@/components/EmergencyServices"
@@ -7,10 +10,29 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
-import { Shield, Smartphone, MapPin, AlertTriangle, Settings, User, HelpCircle, Activity, Phone, MessageSquare } from "lucide-react"
+import { Shield, Smartphone, MapPin, AlertTriangle, Settings, User, HelpCircle, Activity, Phone, MessageSquare, LogOut, Loader2 } from "lucide-react"
 
 const Index = () => {
+  const { user, loading, signOut } = useAuth()
+  const { currentLocation, isTracking, startLocationTracking, sendEmergencyAlert, messages } = useRealTimeLocation()
   const [activeTab, setActiveTab] = useState("emergency")
+
+  // Redirect to auth if not logged in
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <Loader2 className="h-8 w-8 animate-spin" />
+      </div>
+    )
+  }
+
+  if (!user) {
+    return <Navigate to="/auth" replace />
+  }
+
+  const handleSignOut = async () => {
+    await signOut()
+  }
 
   return (
     <div className="min-h-screen bg-background">
@@ -27,9 +49,15 @@ const Index = () => {
                 <p className="text-sm text-muted-foreground">Emergency Response System</p>
               </div>
             </div>
-            <Badge variant="outline" className="bg-success/10 text-success border-success/20">
-              System Active
-            </Badge>
+            <div className="flex items-center gap-2">
+              <Badge variant="outline" className="bg-success/10 text-success border-success/20">
+                System Active
+              </Badge>
+              <Button variant="ghost" size="sm" onClick={handleSignOut}>
+                <LogOut className="h-4 w-4 mr-2" />
+                Sign Out
+              </Button>
+            </div>
           </div>
         </div>
       </header>
@@ -66,8 +94,32 @@ const Index = () => {
                 </p>
               </div>
 
-              <div className="flex justify-center">
-                <SOSButton />
+              <div className="flex flex-col items-center gap-4">
+                <div className="flex justify-center">
+                  <SOSButton />
+                </div>
+                
+                {!isTracking && (
+                  <Button 
+                    variant="outline" 
+                    onClick={startLocationTracking}
+                    className="bg-accent/10 text-accent border-accent/20 hover:bg-accent/20"
+                  >
+                    <MapPin className="h-4 w-4 mr-2" />
+                    Enable Live Location Tracking
+                  </Button>
+                )}
+                
+                {isTracking && currentLocation && (
+                  <div className="text-center">
+                    <Badge variant="secondary" className="bg-success/10 text-success">
+                      Live tracking enabled
+                    </Badge>
+                    <p className="text-xs text-muted-foreground mt-1">
+                      Emergency contacts will receive real-time location updates
+                    </p>
+                  </div>
+                )}
               </div>
 
               <div className="bg-warning/10 border border-warning/20 rounded-lg p-4 max-w-md mx-auto">
@@ -96,17 +148,19 @@ const Index = () => {
                   </div>
                 </CardContent>
               </Card>
-              <Card>
-                <CardContent className="p-6">
-                  <div className="flex items-center gap-3">
-                    <MessageSquare className="h-8 w-8 text-accent" />
-                    <div>
-                      <h3 className="font-semibold">Last Alert</h3>
-                      <p className="text-sm text-muted-foreground">No recent alerts</p>
+                <Card>
+                  <CardContent className="p-6">
+                    <div className="flex items-center gap-3">
+                      <MessageSquare className="h-8 w-8 text-accent" />
+                      <div>
+                        <h3 className="font-semibold">Real-time Messages</h3>
+                        <p className="text-sm text-muted-foreground">
+                          {messages.length > 0 ? `${messages.length} new messages` : "No recent messages"}
+                        </p>
+                      </div>
                     </div>
-                  </div>
-                </CardContent>
-              </Card>
+                  </CardContent>
+                </Card>
             </section>
           </TabsContent>
 

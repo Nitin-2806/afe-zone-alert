@@ -183,24 +183,6 @@ export type Database = {
           },
         ]
       }
-      t1: {
-        Row: {
-          created_at: string
-          date: string | null
-          id: number
-        }
-        Insert: {
-          created_at?: string
-          date?: string | null
-          id?: number
-        }
-        Update: {
-          created_at?: string
-          date?: string | null
-          id?: number
-        }
-        Relationships: []
-      }
     }
     Views: {
       [_ in never]: never
